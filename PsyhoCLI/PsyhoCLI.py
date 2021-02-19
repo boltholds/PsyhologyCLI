@@ -9,14 +9,19 @@ import psycopg2
 try:
     #Пытаемся установить соединение с БД
     connecton = psycopg2.connect(
-      database="postgres", 
-      user="postgres", 
-      password="9318093180bh", 
-      host="127.0.0.1", 
-      port="5432"
+        database="postgres", 
+        user="postgres", 
+        password="9318093180bh", 
+        host="127.0.0.1", 
+        port="5432"
     )
-    print("Соединение с PostgreSQL успешно установлено!")
+    #Значения для авторизации в Airtable
+    baseID = 'appQnV5O4ndpzTcMs'
+    apiID = 'keyncr4pK9gc6bE1r'
+    airtablename = 'Psychotherapists'
     nametable = 'THERAPEFTS'
+
+    print("Соединение с PostgreSQL успешно установлено!")
     curs = connecton.cursor()
     #Если такой БД нет создаём её по шаблону
     curs.execute("SELECT to_regclass(%s)", (nametable,))
@@ -31,13 +36,7 @@ try:
         connecton.commit()  
         print("База данных успешно создана!")
     else:
-        print("Обновление таблицы...")
-
-    #Значения для авторизации в Airtable
-    baseID = 'appQnV5O4ndpzTcMs'
-    apiID = 'keyncr4pK9gc6bE1r'
-    airtablename = 'Psychotherapists'
- 
+        print("Обновление таблицы")
     #Подключаем Airtablet
     table = airtable.Airtable(baseID,airtablename,apiID)
     #Анализируем полученный из таблицы сложный словарь
@@ -70,7 +69,7 @@ try:
     if len(result) !=0 :
         #Если список с ключами не пустой, значит есть что удалить!
         for poit in result:
-            curs.execute("DELETE from THERAPEFTS where ID=%s;",(poit,))
+            curs.execute("DELETE FROM THERAPEFTS WHERE ID=%s;",(poit,))
             print("Удалена запись с ID: ", str(poit))
     else:
         print("Обновление таблицы не требуется!")
