@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'Therapysts.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
+        'NAME': 'djangodb',
         'USER' : 'postgres',
         'PASSWORD' : '9318093180bh',
         'HOST' : '127.0.0.1',
@@ -105,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-ru'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
