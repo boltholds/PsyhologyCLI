@@ -4,6 +4,7 @@ Definition of views.
 
 from datetime import datetime
 from django.shortcuts import render
+from .models import CLINICUS
 from django.http import HttpRequest
 
 def home(request):
@@ -26,7 +27,7 @@ def contact(request):
         'app/contact.html',
         {
             'title':'Contact',
-            'message':'Your contact page.',
+            'message':'My contact page.',
             'year':datetime.now().year,
         }
     )
@@ -39,7 +40,21 @@ def about(request):
         'app/about.html',
         {
             'title':'About',
-            'message':'Your application description page.',
+            'message':'There you look about site',
             'year':datetime.now().year,
+        }
+    )
+def terapefts(request):
+    """Renders the home page."""
+    assert isinstance(request, HttpRequest)
+    dbs = CLINICUS.objects.order_by('id')
+    return render(
+        request,
+        'app/terapefts.html',
+        {
+            'title':'Therapefts',
+            'message':'These you get a therapyst',
+            'year':datetime.now().year,
+            'database': dbs
         }
     )

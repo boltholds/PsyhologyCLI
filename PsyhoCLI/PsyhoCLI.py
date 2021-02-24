@@ -9,7 +9,7 @@ import psycopg2
 try:
     #Пытаемся установить соединение с БД
     connecton = psycopg2.connect(
-        database="postgres", 
+        database="test1", 
         user="postgres", 
         password="9318093180bh", 
         host="127.0.0.1", 
@@ -19,20 +19,21 @@ try:
     baseID = 'appQnV5O4ndpzTcMs'
     apiID = 'keyncr4pK9gc6bE1r'
     airtablename = 'Psychotherapists'
-    nametable = 'THERAPEFTS'
+    nametable = "therapyst"
 
     print("Соединение с PostgreSQL успешно установлено!")
     curs = connecton.cursor()
     #Если такой БД нет создаём её по шаблону
-    curs.execute("SELECT to_regclass(%s)", (nametable,))
+    curs.execute("SELECT to_regclass('{}')".format(nametable))
     if not curs.fetchone()[0]:
-        curs.execute('''CREATE TABLE IF NOT EXISTS THERAPEFTS
-                        (ID VARCHAR(17) PRIMARY KEY,
+        curs.execute('''CREATE TABLE IF NOT EXISTS {} (
+                        ID INT PRIMARY KEY,
+                        IDRECORD VARCHAR(17) NOT NULL,
                         NAME TEXT NOT NULL,
                         THERAPY_TEG TEXT NOT NULL,
                         IMG_FUL VARCHAR(255),
                         IMG_SMAL VARCHAR(255),
-                        DATA DATE);''')
+                        DATA DATE);'''.format(nametable))
         connecton.commit()  
         print("База данных успешно создана!")
     else:
@@ -41,9 +42,10 @@ try:
     table = airtable.Airtable(baseID,airtablename,apiID)
     #Анализируем полученный из таблицы сложный словарь
     ids = set()#Множество куда сохраняем скаченные ключи
+    i = 1
     for records in table.get_all():
-        id = records['id']
-        ids.add(id)
+        idrecord = records['id']
+        ids.add(idrecord)
         data = records['createdTime']
         name = records['fields']['Имя']
         #Превращаем перечисленные методы в теги для удобного разедения
@@ -55,12 +57,13 @@ try:
         #Вставляем в БД новые значения и фиксируем изменения
         curs = connecton.cursor()
         curs.execute(
-        "INSERT INTO THERAPEFTS (ID,NAME,THERAPY_TEG,IMG_FUL,IMG_SMAL,DATA) VALUES(%s ,%s ,%s ,%s ,%s ,%s) ON CONFLICT(ID) DO NOTHING",
-        (id,name,method,foto['full']['url'],foto['small']['url'],data,))
+        "INSERT INTO {} (ID,IDRECORD,NAME,THERAPY_TEG,IMG_FUL,IMG_SMAL,DATA) VALUES({},'{}' ,'{}','{}' ,'{}' ,'{}' ,'{}') ON CONFLICT(ID) DO NOTHING".format
+        (nametable,i,idrecord,name,method,foto['full']['url'],foto['small']['url'],data,))
         connecton.commit() 
+        i+=1
     #Поиск значений ключей которые есть в БД ,но нет в Airtable и удаление записей с такими ключами из БД
     curs = connecton.cursor()
-    curs.execute('''SELECT ID FROM THERAPEFTS''')
+    curs.execute('''SELECT ID FROM s%''',(nametable,))
     rows = curs.fetchall()
     comp =set()
     for row in rows:
@@ -69,7 +72,7 @@ try:
     if len(result) !=0 :
         #Если список с ключами не пустой, значит есть что удалить!
         for poit in result:
-            curs.execute("DELETE FROM THERAPEFTS WHERE ID=%s;",(poit,))
+            curs.execute("DELETE FROM %s WHERE ID=%s;",(nametable,poit,))
             print("Удалена запись с ID: ", str(poit))
     else:
         print("Обновление таблицы не требуется!")
