@@ -3,7 +3,7 @@ Definition of models.
 """
 
 from django.db import models
-
+from django.utils.translation import ugettext_lazy as trnsl
 
 class CLINICUS(models.Model):
     idRecords = models.CharField(max_length=20)

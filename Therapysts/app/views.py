@@ -6,7 +6,16 @@ from datetime import datetime
 from django.shortcuts import render
 from .models import CLINICUS
 from django.http import HttpRequest
+from django.utils.translation import ugettext_lazy as trnsl
 
+main = trnsl('Главная')
+contact_title = trnsl('Контакты')
+contact_message = trnsl('Здесь вы узнаете как с нами связаться!')
+about_title = trnsl('О нас')
+about_message= trnsl('Мы клиника с мировым именем!')
+quest_title = trnsl('Психотерапевты')
+quest_message = trnsl('Выбери своего специалиста из списка :')
+spec = trnsl('{}')
 def home(request):
     """Главная страница сайта"""
     assert isinstance(request, HttpRequest)
@@ -14,7 +23,7 @@ def home(request):
         request,
         'app/index.html',
         {
-            'title':'Главная',
+            'title':main,
             'year':datetime.now().year,
         }
     )
@@ -26,8 +35,8 @@ def contact(request):
         request,
         'app/contact.html',
         {
-            'title':'Контакты',
-            'message':'Здесь вы узнаете как с нами связаться!',
+            'title':contact_title,
+            'message':contact_message,
             'year':datetime.now().year,
         }
     )
@@ -39,8 +48,8 @@ def about(request):
         request,
         'app/about.html',
         {
-            'title':'О нас',
-            'message':'Мы клиника с мировым именем!',
+            'title':about_title,
+            'message':about_message,
             'year':datetime.now().year,
         }
     )
@@ -52,8 +61,8 @@ def terapefts(request):
         request,
         'app/terapefts.html',
         {
-            'title':'Психотерапевты',
-            'message':'Выбери своего специалиста',
+            'title':quest_title,
+            'message':quest_message,
             'year':datetime.now().year,
             'database': dbs
         }
@@ -65,7 +74,7 @@ def by_doctor(request, doctor_id):
     request,
     'app/by_doctor.html',
     {
-        'name':"Специалист {}".format(doctor.name),
+        'name':spec.format(doctor.name),
         'foto_url':doctor.urlsLrgeFoto,
         'methods':doctor.Methods,
         'timepub':doctor.timeLoad,
