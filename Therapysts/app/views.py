@@ -8,53 +8,67 @@ from .models import CLINICUS
 from django.http import HttpRequest
 
 def home(request):
-    """Renders the home page."""
+    """Главная страница сайта"""
     assert isinstance(request, HttpRequest)
     return render(
         request,
         'app/index.html',
         {
-            'title':'Home Page',
+            'title':'Главная',
             'year':datetime.now().year,
         }
     )
 
 def contact(request):
-    """Renders the contact page."""
+    """Страничка для контактов"""
     assert isinstance(request, HttpRequest)
     return render(
         request,
         'app/contact.html',
         {
-            'title':'Contact',
-            'message':'My contact page.',
+            'title':'Контакты',
+            'message':'Здесь вы узнаете как с нами связаться!',
             'year':datetime.now().year,
         }
     )
 
 def about(request):
-    """Renders the about page."""
+    """О клинике"""
     assert isinstance(request, HttpRequest)
     return render(
         request,
         'app/about.html',
         {
-            'title':'About',
-            'message':'There you look about site',
+            'title':'О нас',
+            'message':'Мы клиника с мировым именем!',
             'year':datetime.now().year,
         }
     )
 def terapefts(request):
-    """Renders the home page."""
+    """Страничка с списком терапевтов"""
     assert isinstance(request, HttpRequest)
-    dbs = CLINICUS.objects.order_by('id')
+    dbs = CLINICUS.objects.order_by('-timeLoad')
     return render(
         request,
         'app/terapefts.html',
         {
-            'title':'Therapefts',
-            'message':'These you get a therapyst',
+            'title':'Психотерапевты',
+            'message':'Выбери своего специалиста',
             'year':datetime.now().year,
             'database': dbs
         }
     )
+def by_doctor(request, doctor_id):
+    assert isinstance(request, HttpRequest)
+    doctor = CLINICUS.objects.get(pk=doctor_id)
+    return render(
+    request,
+    'app/by_doctor.html',
+    {
+        'name':"Специалист {}".format(doctor.name),
+        'foto_url':doctor.urlsLrgeFoto,
+        'methods':doctor.Methods,
+        'timepub':doctor.timeLoad,
+        'year': datetime.now().year,
+    }
+)

@@ -3,14 +3,18 @@ Definition of urls for Therapysts.
 """
 
 from datetime import datetime
+from django.conf.urls import url
 from django.urls import path
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic import RedirectView
 from app import forms, views
 
 
 urlpatterns = [
     path('', views.home, name='home'),
+    url(r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
+    path('app/<int:doctor_id>/',views.by_doctor),
     path('contact/', views.contact, name='contact'),
     path('about/', views.about, name='about'),
     path('terapefts/', views.terapefts, name='terapefts'),

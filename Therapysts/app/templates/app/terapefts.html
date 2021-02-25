@@ -6,12 +6,15 @@
 <h3>{{ message }}</h3>
 
 {% for record in database %}
-<div class="row">
-    <div class="col-md-1">{{ record.id }}</div>
-    <div class="col-md-1"><Img src= {{ record.urlsSmlFoto }} Width="20" Height="20"></div>
-    <div class="col-md-2">{{ record.name }}</div>
-    <div class="col-md-6">{{ record.Methods }}</div>
-    <div class="col-md-2">{{ record.timeLoad}}</div>
-</div>
+
+<a href="/app/{{ record.pk }}">
+    <div class="row">
+        <div class="col-md-1">{{ record.id }}</div>
+        <div class="col-md-1"><Img src= {{ record.urlsSmlFoto }} Width="20" Height="20"></div>
+        <div class="col-md-2">{{ record.name }}</div>
+        <div class="col-md-6">{{ record.Methods }}</div>
+        <div class="col-md-2">{{ record.timeLoad}}</div>
+    </div>
+</a>
 {% endfor %}
 {% endblock %}
