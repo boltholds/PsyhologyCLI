@@ -95,7 +95,6 @@ try:
     #Анализируем полученный из таблицы сложный словарь
     ids = set()#Множество куда сохраняем скаченные ключи
     for records in table.get_all():
-        print(records)
         idrecord = records['id']
         ids.add(idrecord)
         data = records['createdTime']
@@ -118,4 +117,3 @@ finally:
         curs.close()
         connecton.close()
         print("Соединение с PostgreSQL закрыто")
-        
