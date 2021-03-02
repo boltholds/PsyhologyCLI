@@ -1,0 +1,30 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+<head>
+
+</head>
+<body>
+<div id="container">
+    <div id="foto">
+        <img align-item="center" src= {{ doctor.urlslrgefoto }} Width="377" Height="565" >
+    </div>
+    <div id="block">
+
+            <div id="name">
+                <h3>{{ doctor.name }}</h3>
+            </div>
+            <div id="methods">
+                <h3>Методы: </h3> 
+                <div id="bloc_eque_method">
+                    {%for meth in doctor.method.all %}
+                    <div class="columny">{{meth.therapy}} </div>
+                    {%endfor%} 
+                    
+                </div>
+            </div>
+
+    </div>
+</div>
+</body>
+{% endblock %}

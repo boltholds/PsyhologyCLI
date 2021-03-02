@@ -12,12 +12,9 @@ from app import forms, views
 
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('app/', views.index),
     url(r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
     path('app/<int:doctor_id>/',views.by_doctor),
-    path('contact/', views.contact, name='contact'),
-    path('about/', views.about, name='about'),
-    path('terapefts/', views.terapefts, name='terapefts'),
     path('login/',
         LoginView.as_view
         (

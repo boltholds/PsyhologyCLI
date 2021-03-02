@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+{% extends "app/layout.html" %}
+
+{% block content %}
+<head>
+    <h2>{{ title }}.</h2>
+    <h3>{{ message }}</h3>
+</head>
+<body>
+    {% for record in db %}
+
+    <a href="/app/{{ record.pk }}">
+        <div class="row">
+            <div class="col-md-1">{{ record.pk }}</div>
+            <div class="col-md-1"><Img src={{ record.urlssmlfoto }} Width="20" Height="20"></div>
+            <div class="col-md-2">{{ record.name }}</div>
+            <div class="col-md-6">Здесь будут методы методы и ещё больше методов</div>
+            <div class="col-md-2">{{ record.timeload}}</div>
+        </div>
+    </a>
+    {% endfor %}
+</body>
+{% endblock %}
+
+</html>

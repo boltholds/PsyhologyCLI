@@ -1,0 +1,32 @@
+﻿{% extends "app/layout.html" %}
+<head>
+    <meta charset="utf-8">
+    <h2>{{ title }}.</h2>
+    <h3>{{ message }}</h3>
+</head>
+<body>
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-1">№</div>
+        <div class="col-md-1"></div>
+        <div class="col-md-2">Имя</div>
+        <div class="col-md-6">Терапии</div>
+        <div class="col-md-2">Дата</div>
+    </div>
+    {% for record in object_list %}
+
+
+
+    <a class="row" href="/app/{{ record.pk }}">
+            <div class="col-md-1">{{ record.pk }}</div>
+            <div class="col-md-1"><Img  class="micro_img" src={{ record.urlssmlfoto }} Width="25" Height="33"></div>
+            <div class="col-md-2">{{ record.name }}</div>
+            <div class="col-md-6">{%for meth in record.method.all %}{{meth.therapy}}, {%endfor%}</div>
+            <div class="col-md-2">{{ record.timeload}}</div>  
+     </a>
+
+    {% endfor %}
+</body>
+    {% endblock %}
+

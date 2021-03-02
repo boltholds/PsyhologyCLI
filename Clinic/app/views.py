@@ -5,9 +5,8 @@ Definition of views.
 from datetime import datetime
 from django.shortcuts import render
 from .models import Clinicus,Methods
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
 from django.utils.translation import ugettext_lazy as trnsl
-from django.template import loader
 
 main = trnsl('Главная')
 contact_title = trnsl('Контакты')
@@ -21,18 +20,17 @@ spec = trnsl('{}')
 def index(request):
     """Страничка с списком терапевтов"""
     assert isinstance(request, HttpRequest)
-
-    template = loader.get_template('app/therapeft.html')
     clinics = Clinicus.objects.all()
-    methods = Methods.objects.all()
-    shell =     {
-        'title': quest_title,
-        'message': quest_message,
-        'db': clinics,
-        'meth':methods
-    }
-    return HttpResponse(template.render(shell,request))
-
+    return render(
+        request,
+        'index.html',
+        {
+            'title':quest_title,
+            'message':quest_message,
+            'year':datetime.now().year,
+            'clinics': clinics
+        }
+    )
 def by_doctor(request, doctor_id):
     assert isinstance(request, HttpRequest)
     doctor = Clinicus.objects.get(pk=doctor_id)
@@ -43,8 +41,6 @@ def by_doctor(request, doctor_id):
         'name':spec.format(doctor.name),
         'foto_url':doctor.urlsLrgeFoto,
         'timepub':doctor.timeLoad,
-        'year': datetime.now().year
+        'year': datetime.now().year,
     }
 )
-def about(request):
-    pass
