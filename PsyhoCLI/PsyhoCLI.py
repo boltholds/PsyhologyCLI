@@ -21,11 +21,11 @@ def create_or_update_profi(table_therapyst,idrecord,name,foto,data,methody):
     с таблицей методов'''
     curs = connecton.cursor()
     curs.execute(
-    '''INSERT INTO {} (idrecord,name,urlslrgefoto,urlssmlfoto,timeload) 
-    VALUES('{}' ,'{}' ,'{}' ,'{}' ,'{}') ON CONFLICT(idrecord) 
-    DO UPDATE SET (name,urlslrgefoto,urlssmlfoto,timeload) = 
-    (EXCLUDED.name,EXCLUDED.urlslrgefoto,EXCLUDED.urlssmlfoto,EXCLUDED.timeload)'''.format
-    (table_therapyst,idrecord,name,foto['large']['url'],foto['small']['url'],data))
+    '''INSERT INTO {} (idrecord,name,urlslrgefoto,urlssmlfoto,wightlrgfoto,lenghtlrgfoto,timeload) 
+    VALUES('{}' ,'{}' ,'{}' ,'{}',{},{},'{}') ON CONFLICT(idrecord) 
+    DO UPDATE SET (name,urlslrgefoto,urlssmlfoto,wightlrgfoto,lenghtlrgfoto,timeload) = 
+    (EXCLUDED.name,EXCLUDED.urlslrgefoto,EXCLUDED.urlssmlfoto,EXCLUDED.wightlrgfoto,EXCLUDED.lenghtlrgfoto,EXCLUDED.timeload)'''.format
+    (table_therapyst,idrecord,name,foto['large']['url'],foto['small']['url'],foto['large']['width'],foto['large']['height'],data))
     connecton.commit() 
     curs = connecton.cursor()
     curs.execute("SELECT id FROM {} WHERE idrecord='{}' ORDER BY id".format(table_therapyst,idrecord))
@@ -95,6 +95,7 @@ try:
     #Анализируем полученный из таблицы сложный словарь
     ids = set()#Множество куда сохраняем скаченные ключи
     for records in table.get_all():
+        print(records)
         idrecord = records['id']
         ids.add(idrecord)
         data = records['createdTime']
