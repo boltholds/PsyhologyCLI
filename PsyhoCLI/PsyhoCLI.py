@@ -9,7 +9,7 @@ import traceback
 
 #Значения для авторизации в Airtable
 baseID = 'appQnV5O4ndpzTcMs'
-apiID = 'keyncr4pK9gc6bE1r'
+apiID = ''
 airtablename = 'Psychotherapists'
 #Имена таблиц в базе данных
 table_therapyst = 'app_clinicus'
@@ -76,7 +76,7 @@ try:
     connecton = psycopg2.connect(
         database="clinics", 
         user="postgres", 
-        password="9318093180bh", 
+        password="", 
         host="127.0.0.1", 
         port="5432"
     )
