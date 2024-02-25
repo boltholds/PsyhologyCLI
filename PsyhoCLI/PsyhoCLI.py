@@ -12,6 +12,14 @@ from dotenv import dotenv_values
 import gettext
 from locale import getlocale
 
+
+#Логирование в консоль по умолчанию только для INFO
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+logger.addHandler(console)
+
 # Значения для авторизации в Airtable
 config = dotenv_values(f"air.env")
 baseID = config.get("BASE")
@@ -23,7 +31,7 @@ table_method_therapyst = config.get("TABLE_METHODS")
 table_method = config.get("TABLE_METHODS_NAME")
 
 
-logger = logging.getLogger(__name__)
+
 
 oslang, enc = getlocale()
 oslang = oslang.split("_")[0]
@@ -33,12 +41,12 @@ def loc(s):
     return str(s)
 
 
-# if oslang in ["es", "en", "Es", "EN", "En"]:
-#     gettext.bindtextdomain("en", "/locale")
-#     gettext.textdomain("en")
-#     tr = gettext.translation("en", localedir="locale", languages=['en_US'])
-#     tr.install()
-#     loc = tr.gettext
+if oslang in ["es", "en", "Es", "EN", "En"]:
+    gettext.bindtextdomain("en", "/locale")
+    gettext.textdomain("en")
+    tr = gettext.translation("en", localedir="locale", languages=['en_US'])
+    tr.install()
+    loc = tr.gettext
 
 
 
@@ -95,18 +103,16 @@ def create_or_update_profi(table_name, idrecord, name_doc, foto_profile, data_cr
             f"ON CONFLICT(clinicus_id,methods_id) DO NOTHING"
         )
 
-    ##logger.info(loc("Запись успешно создана или объявлена!"))
-    print(loc("Запись успешно создана или объявлена!"))
+    logger.info(loc("Запись успешно создана или объявлена!"))
     connection.commit()
 
 
 def delete_terapyst(index):
     """Эта функция получает множество ключей анкет психологов которые нужно удалить из таблицы БД,
     # также удаляет связи в таблице методов"""
-    # logger.debug(loc('Поиск значений ключей которые есть в БД,'
-    #                  'но нет в Airtable и удаление записей с такими ключами из БД'))
-    print(loc('Поиск значений ключей которые есть в БД,'
-          'но нет в Airtable и удаление записей с такими ключами из БД'))
+    logger.debug(loc('Поиск значений ключей которые есть в БД,'
+                     'но нет в Airtable и удаление записей с такими ключами из БД'))
+
     cursor = connection.cursor()
     cursor.execute(f'SELECT idrecord FROM {table_therapyst}')
     rows = cursor.fetchall()
@@ -119,11 +125,11 @@ def delete_terapyst(index):
         for poit in result:
             cursor.execute(f"DELETE FROM {table_therapyst} WHERE idrecord='{poit}' RETURNING id;")
             id_delete_terapeft = cursor.fetchone()[0]
-            print(loc(f"Удалена учётная запись с ID:{str(poit)}"))
+            logger.info(loc(f"Удалена учётная запись с ID:{str(poit)}"))
             # А теперь удалим все остальные записи этого терапевта из таблиц методов
             cursor.execute(f"DELETE FROM {table_method_therapyst} WHERE clinicus_id='{id_delete_terapeft}';")
     else:
-        print(loc("Нет полей для удаления: Конец сеанса!"))
+        logger.info(loc("Нет полей для удаления: Конец сеанса!"))
     connection.commit()
 
 
@@ -141,7 +147,7 @@ if __name__ == "__main__":
         password = config.get("PASSWORD")
         host = config.get("HOST")
         port = config.get("PORT")
-        print(f"{db} for {user} on {host}:{port}")
+        logger.info(f"{db} for {user} on {host}:{port}")
         # Пытаемся установить соединение с БД
         connection = None
         connection = psycopg2.connect(
@@ -151,12 +157,12 @@ if __name__ == "__main__":
             host=host,
             port=port
         )
-        print(loc("Соединение с PostgreSQL успешно установлено!"))
+        logger.info(loc("Соединение с PostgreSQL успешно установлено!"))
 
         cursor = connection.cursor()
         # Подключаем Airtablet
         table = Airtable(baseID, apiID)
-        print(loc('Заполняем таблицу методов извлекая их из всех записей'))
+        logger.debug(loc('Заполняем таблицу методов извлекая их из всех записей'))
         cursor = connection.cursor()
         for records in table.get(airtable_name)['records']:
             for terapy in records['fields']['Методы']:
@@ -172,19 +178,19 @@ if __name__ == "__main__":
             name = records['fields']['Имя']
             foto = records['fields']['Фотография'][0]['thumbnails']
             psy_methods = records['fields']['Методы']
-            print(loc('Вводим в таблицу новые значения и фиксируем изменения'))
+            logger.debug(loc('Вводим в таблицу новые значения и фиксируем изменения'))
             # Проверяем есть ли такие записи в таблице
             cursor = connection.cursor()
-            print(f"SELECT id FROM {table_therapyst} WHERE idrecord='{idrecord}' ORDER BY id")
+            logger.debug(f"SELECT id FROM {table_therapyst} WHERE idrecord='{idrecord}' ORDER BY id")
             cursor.execute(f"SELECT id FROM {table_therapyst} WHERE idrecord='{idrecord}' ORDER BY id")
             create_or_update_profi(table_therapyst, idrecord, name, foto, data, psy_methods)
         delete_terapyst(ids)
 
     except (Exception, psycopg2.Error) as error:
-        print(loc(error))
-        print(traceback.format_exc())
+        logger.error(loc(error))
+        logger.error(traceback.format_exc())
     finally:
         if connection:
             cursor.close()
             connection.close()
-            print(loc("Соединение с PostgreSQL закрыто"))
+            logger.info(loc("Соединение с PostgreSQL закрыто"))
