@@ -14,6 +14,6 @@ class Clinicus(models.Model):
     method = models.ManyToManyField(Methods)
     wightlrgfoto = models.IntegerField()
     lenghtlrgfoto = models.IntegerField()
-    urlslrgefoto = models.URLField()
-    urlssmlfoto = models.URLField()
+    urlslrgefoto = models.URLField(max_length=600)
+    urlssmlfoto = models.URLField(max_length=600)
     timeload = models.DateField(auto_now_add=True)
